@@ -4,9 +4,14 @@
 #include "BeehiveProject.h"
 #include <thread>
 #include "Header Files/Beehive.h"
+#include <mutex>
+#include <atomic>
+#include "Header Files/Honey.h"
 
 using namespace std;
 int waitTime = 20;
+mutex pencil;
+static atomic<Honey>* honey;
 void ProduceHoney(int _width, int _height, int _length, int _volume, bool start) {
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	int* height = &_height;
@@ -21,10 +26,12 @@ void ProduceHoney(int _width, int _height, int _length, int _volume, bool start)
 
 	}
 	else {
-		Beehive* bHive = Beehive::GetInstance(width, height, length, volume, start);
-		int wait =bHive->waitTime(waitTime);
+		 
+		waitTime = (rand() % 20) + 5;
+		int wait = Beehive::WaitTime(waitTime);
+
 		std::cout << "Wait time has decreament to : " << wait << "\n";
-		std::cout << bHive->volume() << "\n";
+		std::cout << Beehive::GetVolume() << "\n";
 	}
 
 

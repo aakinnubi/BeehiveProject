@@ -9,6 +9,9 @@ using namespace std;
 class Beehive {
 
 protected:
+    Beehive() {
+
+   }
 	Beehive(const int width, const int height, const int breadth, const int volume, const bool produce)
 		:Width(width), Height(height), Length(breadth), Volume(volume),Produce(produce) {
 
@@ -16,9 +19,9 @@ protected:
 	~Beehive() {
 
 	}
-	static Beehive* beehive;
-public:
 
+public:
+  
     /**
      * Singletons should not be cloneable.
      */
@@ -34,29 +37,23 @@ public:
      * object stored in the static field.
      */
 
-    static Beehive *GetInstance(const int* width, const int* height, const int* breadth, const int* volume,const bool& produce);
+    static Beehive &GetInstance() {
+        static Beehive beehive;
+        return beehive;
+    }
     /**
      * Finally, any singleton should define some business logic, which can be
      * executed on its instance.
      */
-
-    int waitTime(int waitSeconds) const {
-       /* int currentValue = **waitSeconds;*/
-        while (waitSeconds-- > -1) {
-            if (waitSeconds == 0) {
-                return waitSeconds;
-                break;
-            }
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-        }
-        return -1;
+    static int WaitTime(int waitSeconds) {
+        return GetInstance().waitTime(waitSeconds);
     }
-    int volume() const {
-        return Volume;
+    static int GetVolume() {
+       return GetInstance().volume();
     }
-    bool produced()const {
-        return Produce;
-    }
+    static bool GetProduce() {
+        return GetInstance().produced();
+   }
 private:
 	int Width = 10;
 	int Height = 10;
@@ -71,5 +68,22 @@ private:
         time(&tt);
         st = localtime(&tt);
         return asctime(st);
+    }
+    int volume() const {
+        return Volume;
+    }
+    bool produced()const {
+        return Produce;
+    }
+    int waitTime(int waitSeconds) const {
+        /* int currentValue = **waitSeconds;*/
+        while (waitSeconds-- > -1) {
+            if (waitSeconds == 0) {
+                return waitSeconds;
+                break;
+            }
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
+        return -1;
     }
 };
