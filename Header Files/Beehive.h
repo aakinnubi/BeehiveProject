@@ -45,8 +45,14 @@ public:
      * Finally, any singleton should define some business logic, which can be
      * executed on its instance.
      */
-    static int WaitTime(int waitSeconds) {
-        return GetInstance().waitTime(waitSeconds);
+    static int WaitTime() {
+        return GetInstance().waitTime(GetInstance().GetWaitTime());
+    }
+    static void SetWaitTime(int waitSeconds) {
+        GetInstance().timeToWait = waitSeconds;
+    }
+    static int GetWaitTime() {
+      return  GetInstance().timeToWait;
     }
     static int GetVolume() {
        return GetInstance().volume();
@@ -54,12 +60,37 @@ public:
     static bool GetProduce() {
         return GetInstance().produced();
    }
+    static int GetWidth() {
+        return GetInstance().Width;
+    }
+    static int GetHeight() {
+        return GetInstance().Height;
+    }
+    static int GetLength() {
+        return GetInstance().Length;
+    }
+    static void SetWidth(int width) {
+        GetInstance().Width = width;
+    }
+    static void SetHeight(int height) {
+        GetInstance().Height = height;
+    }
+    static void SetLength(int length) {
+        GetInstance().Length = length;
+    }
+    static void SetVolume(int volume) {
+        GetInstance().Volume = volume;
+    }
+    static void SetProduce(bool isProduce) {
+        GetInstance().Produce = isProduce;
+    }
 private:
 	int Width = 10;
 	int Height = 10;
 	int Length =10;
 	int Volume = 0;
 	bool Produce =false;
+    int timeToWait = 0;
     string getCurrentDateTime()
     {
         time_t tt;
