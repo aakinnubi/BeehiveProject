@@ -1,11 +1,14 @@
 #pragma once
 class Farmer {
+	Farmer() {
 
+	}
 	~Farmer() {
 
 	}
 public:
 	Farmer(Farmer& other) = delete;
+
 	static Farmer& GetInstance() {
 		static Farmer farmer;
 		return farmer;
@@ -13,22 +16,22 @@ public:
 
 	void operator=(const Farmer&) = delete;
 
-	void SetQuantityToBeTaken(int quantity) {
-		GetInstance().quantityToBeTaken = quantity;
+	static void SetQuantityToBeTaken(int quantity) {
+		GetInstance().quantityToBeTaken += quantity;
 	}
-	void SetHoneyQuantity(int honeyQ) {
-		GetInstance().honeyQuantity = honeyQ;
+	static void SetHoneyQuantity(int honeyQ) {
+		GetInstance().honeyQuantity += honeyQ;
 	}
-	void SetIsCurrentlyTakingHoney(bool status) {
+	static void SetIsCurrentlyTakingHoney(bool status) {
 		GetInstance().isCurrentlyTakingHoney = status;
 	}
-	int  GetQuantityToBeTaken() {
+	static int  GetQuantityToBeTaken() {
 		return GetInstance().quantityToBeTaken;
 	}
-	int GetHoneyQuantity() {
+	static int GetHoneyQuantity() {
 		return GetInstance().honeyQuantity;
 	}
-	bool GetIsCurrentlyTakingHoney() {
+	static bool GetIsCurrentlyTakingHoney() {
 		return GetInstance().isCurrentlyTakingHoney;
 	}
 private:

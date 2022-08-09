@@ -7,6 +7,7 @@
 #include <mutex>
 #include <atomic>
 #include "Header Files/Honey.h"
+#include "Header Files/Farmer.h"
 
 using namespace std;
 int waitTime = 20;
@@ -21,7 +22,7 @@ void ProduceHoney(int _width, int _height, int _length, int _volume, bool start)
 	int v = volume;
 	if (v >= size) {
 		cout << "The heeive is filled with Honey already. "
-			"or volume bigger than heeive capacity.Volume specified is : " << to_string(v) << " while th capacity is : " << to_string(size) <<endl;
+			"or volume bigger than heeive capacity.Volume specified is : " << to_string(v) << " while th capacity is : " << to_string(size) <<endl << "\n";
 	}
 	else {
 		pencil.lock();
@@ -33,8 +34,8 @@ void ProduceHoney(int _width, int _height, int _length, int _volume, bool start)
 		Beehive::SetLength(length);
 		Beehive::SetVolume(volume);
 		Beehive::SetProduce(true);
-		cout << "Another Beehives is currently producing..." << endl << "\n";
-		std::cout << "Wait time has decreament to : " << wait << "\n";
+		cout << "Another Beehives is currently producing... " << endl << "\n";
+			cout << "Wait time has decreament to : " << wait << "\n";
 		wait = Beehive::WaitTime();
 		if (wait == 0) {
 			std::cout << Beehive::GetVolume() << "\n";
@@ -45,9 +46,25 @@ void ProduceHoney(int _width, int _height, int _length, int _volume, bool start)
 			string message = "Honey is currently having the volume of " + to_string(Honey::GetHoneyVolume());
 			cout << message << endl << "\n";
 		}
-		
+	
 	}
 
+}
+
+void FarmerTakeHoney() {
+	pencil.lock();
+	int i = 0;
+	int previousHoneyValue = (Honey::GetHoneyVolume());
+	while (Honey::GetHoneyVolume() > 0 && Honey::GetHoneyExist() && (Honey::GetHoneyVolume() -i) > 0 ) {
+		int newVolumeFarmer = Honey::TakeHoney(i);
+		Farmer::SetIsCurrentlyTakingHoney(true);
+		Farmer::SetQuantityToBeTaken(newVolumeFarmer);
+		/*pencil.unlock();*/
+		++i;
+	}
+	pencil.unlock();
+	string message = "Honey is currently having the volume of " + to_string(Honey::GetHoneyVolume()) +"  but the previous value was : "+to_string(previousHoneyValue);
+	cout << message << endl << "\n";
 }
 int main()
 {
@@ -72,6 +89,10 @@ int main()
 	if (t4.joinable()) {
 		t4.join();
 	}
+	std::thread farmerThread(FarmerTakeHoney);
+	if (farmerThread.joinable()) {
+		farmerThread.join();
+	}
 	return 0;
 }
 
@@ -88,12 +109,3 @@ int main()
 //For additional challenge change the 5 - 15 second timer on the beehives to waiting to see if 1 of 4 flower objects has produced any pollen.
 //The flowers can produce pollen at a set rate or random rate
 
-//Use case Extraction 
-
-//1. Program can only have 4 threads
-//2. The 4 Threads can all produce honey
-//3. Each can only produce honey at 5 to 15 seconds
-//4. after producing honey between 5-15 seconds program will wait 5 seconds before producing another
-//5. Honey class must be Singleton and can only be instantiate once
-//6.Honey quantity & Instance will only be available once per thread
-//7. there has to be a sleep in between
