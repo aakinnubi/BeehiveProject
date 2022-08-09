@@ -102,7 +102,7 @@ int main()
 	}
 	cout << Honey::GetHoneyVolume() << endl;
 
-	return Honey::GetHoneyVolume();
+	return 0;
 }
 
 
