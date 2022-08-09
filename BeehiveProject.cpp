@@ -35,36 +35,41 @@ void ProduceHoney(int _width, int _height, int _length, int _volume, bool start)
 		Beehive::SetVolume(volume);
 		Beehive::SetProduce(true);
 		cout << "Another Beehives is currently producing... " << endl << "\n";
-			cout << "Wait time has decreament to : " << wait << "\n";
+			cout << "\n Wait time has decreament to : " << wait << "\n";
 		wait = Beehive::WaitTime();
-		if (wait == 0) {
-			std::cout << Beehive::GetVolume() << "\n";
-			int currentBeehiveVolume = Beehive::GetVolume();
-			Honey::SetHoneyVolume(currentBeehiveVolume);
-			pencil.unlock();
-			cout << "Beehives is done producing... another beehives starts immediately" << endl << "\n";
-			string message = "Honey is currently having the volume of " + to_string(Honey::GetHoneyVolume());
-			cout << message << endl << "\n";
-		}
+		std::cout << Beehive::GetVolume() << "\n";
+		int currentBeehiveVolume = Beehive::GetVolume();
+		Honey::SetHoneyVolume(currentBeehiveVolume);
+		pencil.unlock();
+		cout << "Beehives is done producing... another beehives starts immediately\n" << endl;
+		string message = "Honey is currently having the volume of " + to_string(Honey::GetHoneyVolume());
+		cout << message << endl << "\n";
 	
 	}
 
 }
 
 void FarmerTakeHoney() {
-	pencil.lock();
+	//pencil.lock();
 	int i = 0;
 	int previousHoneyValue = (Honey::GetHoneyVolume());
-	while (Honey::GetHoneyVolume() > 0 && Honey::GetHoneyExist() && (Honey::GetHoneyVolume() -i) > 0 ) {
-		int newVolumeFarmer = Honey::TakeHoney(i);
-		Farmer::SetIsCurrentlyTakingHoney(true);
-		Farmer::SetQuantityToBeTaken(newVolumeFarmer);
-		/*pencil.unlock();*/
+	int percentageDone = (i / previousHoneyValue) * 100;
+	int honeyvolume = Honey::GetHoneyVolume();
+	while (honeyvolume >0 && i <= previousHoneyValue) {
+		if (Honey::GetHoneyExist()) {
+			int newVolumeFarmer = Honey::TakeHoney(i);
+			Farmer::SetIsCurrentlyTakingHoney(true);
+			Farmer::SetQuantityToBeTaken(newVolumeFarmer);
+			honeyvolume = Honey::GetHoneyVolume();
+		}
 		++i;
 	}
-	pencil.unlock();
-	string message = "Honey is currently having the volume of " + to_string(Honey::GetHoneyVolume()) +"  but the previous value was : "+to_string(previousHoneyValue);
-	cout << message << endl << "\n";
+	if (Honey::GetHoneyVolume() == 0) {
+		string message = "Honey is currently having the volume of " + to_string(Honey::GetHoneyVolume()) + "  but the previous value was : " + to_string(previousHoneyValue);
+		cout << message << endl << "\n";
+		
+	}
+
 }
 int main()
 {
@@ -91,9 +96,13 @@ int main()
 	}
 	std::thread farmerThread(FarmerTakeHoney);
 	if (farmerThread.joinable()) {
+		pencil.lock();
 		farmerThread.join();
+		pencil.unlock();
 	}
-	return 0;
+	cout << Honey::GetHoneyVolume() << endl;
+
+	return Honey::GetHoneyVolume();
 }
 
 
